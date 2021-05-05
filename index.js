@@ -3,8 +3,6 @@ const nodemailer = require("nodemailer");
 const AdmZip = require("adm-zip");
 const fs = require("fs");
 
-const zip = new AdmZip();
-
 //paths to the folders with screenshots and zip files
 const shotsDir = "./screenshots/";
 const zipDir = "./zip_files/";
@@ -98,7 +96,7 @@ const deleteFile = (file) => {
   }
 };
 
-const addFile = (file) => {
+const addFile = (file, zip) => {
   try {
     zip.addLocalFile(`${shotsDir}${file}`);
     console.log(`${file} added`);
@@ -110,9 +108,10 @@ const addFile = (file) => {
 };
 
 const makeZip = (url) => {
-  fs.readdirSync(`${shotsDir}`).map((file) => addFile(file));
+  let zip = new AdmZip();
   fs.mkdirSync(zipDir, { recursive: true });
-  zip.writeZip(`./zip_files/${extractName(url)}.zip`);
+  fs.readdirSync(`${shotsDir}`).map((file) => addFile(file, zip));
+  zip.writeZip(`${zipDir}${extractName(url)}.zip`);
   console.log(`zip ${extractName(url)} maked!`);
 };
 
@@ -121,7 +120,7 @@ const setAttachments = (url) => {
   return (attachments = [
     {
       filename: `${fileName}.zip`,
-      path: `./zip_files/${fileName}.zip`,
+      path: `${zipDir}${fileName}.zip`,
     },
   ]);
 };
