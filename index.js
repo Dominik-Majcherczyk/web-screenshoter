@@ -2,24 +2,26 @@ const webshot = require("node-webshot");
 const nodemailer = require("nodemailer");
 const AdmZip = require("adm-zip");
 const fs = require("fs");
+
 const zip = new AdmZip();
 
+//path to the folder where screenshots will be stored
+const dirName = "./screenshots/";
+
 const resolutions = {
-  desktop: {
+  large: {
     width: 1920,
     height: 1080,
   },
-  tablet: {
+  medium: {
     width: 768,
     height: 1024,
   },
-  mobile: {
+  small: {
     width: 320,
     height: 480,
   },
 };
-
-const dirName = "./screenshots/";
 
 const setNodemailerData = (email, password, receiverEmail, attachments) => {
   return (nodemailerData = {
@@ -33,7 +35,7 @@ const setNodemailerData = (email, password, receiverEmail, attachments) => {
     mailOptions: {
       from: email,
       to: receiverEmail,
-      subject: `${attachments.fileName} screenshots`,
+      subject: `${attachments[0].filename} screenshots`,
       attachments,
     },
   });
@@ -44,7 +46,7 @@ const setOptions = (screenSize) => {
     screenSize,
     shotSize: {
       width: "window",
-      //change line below to  height: "window" if you want to trim the page to the specified height
+      //change line below to  height: "all" if you don't want to trim the page to the specified height
       height: "window",
     },
     userAgent:
@@ -99,6 +101,7 @@ const addFile = (file) => {
   try {
     zip.addLocalFile(`${dirName}${file}`);
     console.log(`${file} added`);
+    //comment out the function below to not delete files after adding to
     deleteFile(file);
   } catch (err) {
     console.error(err);
@@ -123,6 +126,7 @@ const setAttachments = (url) => {
 
 const sendEmail = (url, email, password, receiverEmail) => {
   const attachments = setAttachments(url);
+
   const nodemailerData = setNodemailerData(
     email,
     password,
