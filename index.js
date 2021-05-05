@@ -5,8 +5,9 @@ const fs = require("fs");
 
 const zip = new AdmZip();
 
-//path to the folder where screenshots will be stored
-const dirName = "./screenshots/";
+//paths to the folders with screenshots and zip files
+const shotsDir = "./screenshots/";
+const zipDir = "./zip_files/";
 
 const resolutions = {
   large: {
@@ -61,7 +62,7 @@ const extractName = (url) => {
 };
 
 const setPathToFile = (url, mediaSize) => {
-  const path = `${dirName}${extractName(url)}-${mediaSize.width}x${
+  const path = `${shotsDir}${extractName(url)}-${mediaSize.width}x${
     mediaSize.height
   }.jpg`;
   return path;
@@ -90,7 +91,7 @@ const takeScreenshots = (url) => {
 
 const deleteFile = (file) => {
   try {
-    fs.unlinkSync(`${dirName}${file}`);
+    fs.unlinkSync(`${shotsDir}${file}`);
     console.log(`${file} removed`);
   } catch (err) {
     console.error(err);
@@ -99,9 +100,9 @@ const deleteFile = (file) => {
 
 const addFile = (file) => {
   try {
-    zip.addLocalFile(`${dirName}${file}`);
+    zip.addLocalFile(`${shotsDir}${file}`);
     console.log(`${file} added`);
-    //comment out the function below to not delete files after adding to
+    //comment out the function below to not delete files after adding to zip
     deleteFile(file);
   } catch (err) {
     console.error(err);
@@ -109,7 +110,8 @@ const addFile = (file) => {
 };
 
 const makeZip = (url) => {
-  fs.readdirSync(`${dirName}`).map((file) => addFile(file));
+  fs.readdirSync(`${shotsDir}`).map((file) => addFile(file));
+  fs.mkdirSync(zipDir, { recursive: true });
   zip.writeZip(`./zip_files/${extractName(url)}.zip`);
   console.log(`zip ${extractName(url)} maked!`);
 };
