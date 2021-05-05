@@ -108,7 +108,7 @@ const addFile = (file, zip) => {
 };
 
 const makeZip = (url) => {
-  let zip = new AdmZip();
+  const zip = new AdmZip();
   fs.mkdirSync(zipDir, { recursive: true });
   fs.readdirSync(`${shotsDir}`).map((file) => addFile(file, zip));
   zip.writeZip(`${zipDir}${extractName(url)}.zip`);
