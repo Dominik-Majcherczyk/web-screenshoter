@@ -1,7 +1,7 @@
-const webshot = require("node-webshot");
 const nodemailer = require("nodemailer");
 const AdmZip = require("adm-zip");
 const fs = require("fs");
+const captureWebsite = require("capture-website");
 
 //paths to the folders with screenshots and zip files
 const shotsDir = "./screenshots/";
@@ -41,17 +41,10 @@ const setNodemailerData = (email, password, receiverEmail, attachments) => {
 };
 
 const setOptions = (screenSize) => {
-  return {
-    screenSize,
-    shotSize: {
-      width: "window",
-      //change line below to  height: "all" if you don't want to trim the page to the specified height
-      height: "window",
-    },
-    userAgent:
-      "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_2 like Mac OS X; en-us)" +
-      " AppleWebKit/531.21.20 (KHTML, like Gecko) Mobile/7B298g",
-  };
+  return (options = {
+    width: screenSize.width,
+    height: screenSize.height,
+  });
 };
 
 const extractName = (url) => {
@@ -66,24 +59,18 @@ const setPathToFile = (url, mediaSize) => {
   return path;
 };
 
-const makeWebshot = (url, mediaSize) =>
-  new Promise((resolve, reject) => {
-    webshot(
-      url,
-      setPathToFile(url, mediaSize),
-      setOptions(mediaSize),
-      (err) => {
-        if (err) return reject(err);
-        console.log("screenshot taken!");
-        return resolve();
-      }
-    );
-  });
-
-const takeScreenshots = (url) => {
+const takeScreenshots = async (url) => {
   const resolutionsArray = Object.values(resolutions);
-  return Promise.all(
-    resolutionsArray.map((mediaSize) => makeWebshot(url, mediaSize))
+  await Promise.all(
+    resolutionsArray.map(async (mediaSize) => {
+      const screenshot = await captureWebsite.file(
+        url,
+        setPathToFile(url, mediaSize),
+        setOptions(mediaSize)
+      );
+      console.log("screenshot taken!");
+      return screenshot;
+    })
   );
 };
 
