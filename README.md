@@ -21,6 +21,6 @@ run server `npm server.js` or `nodemon server.js`
 
 - <a href="https://github.com/cthackers/adm-zip/wiki">adm-zip</a>
 - <a href="https://expressjs.com/">express</a>
-- <a href="https://www.npmjs.com/package/node-webshot">node-webshot</a>
+- <a href="https://www.npmjs.com/package/capture-website">capture-website</a>
 - <a href="https://nodemailer.com/about/">nodemailer</a>
 
