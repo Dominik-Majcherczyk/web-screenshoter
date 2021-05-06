@@ -61,6 +61,7 @@ const setPathToFile = (url, mediaSize) => {
 
 const takeScreenshots = async (url) => {
   const resolutionsArray = Object.values(resolutions);
+  fs.mkdirSync(shotsDir, { recursive: true });
   await Promise.all(
     resolutionsArray.map(async (mediaSize) => {
       const screenshot = await captureWebsite.file(
